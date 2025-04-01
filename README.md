@@ -7,3 +7,5 @@ This project creates and uses a SQLLite DB as a simple local way of tracking tod
 This can be done via a online SQL DB but for tests purposes and to not incur costs its made locally.
 No custom schma is used for the DB but the DB is locally generated using TODO Model.
 
+Persistence Tests needs to be added.
+

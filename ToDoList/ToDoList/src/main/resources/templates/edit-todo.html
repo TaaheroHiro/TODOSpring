@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Edit Todo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script>
+    function updateCompletedAt(status) {
+      const completedAtInput = document.getElementById('completedAt');
+      if (status === 'COMPLETED') {
+        const now = new Date();
+         // Format as YYYY-MM-DDTHH:MM
+        completedAtInput.value = now.toISOString().slice(0, 16); //
+      } else {
+        completedAtInput.value = ''; // Clear completedAt if status is not completed
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="mt-5">Edit Todo</h1>
+
+  <form th:action="@{/update/{id}(id=${todo.id})}" th:object="${todo}" method="post">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" class="form-control" id="name" th:field="*{name}">
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <input type="text" class="form-control" id="description" th:field="*{description}">
+    </div>
+    <div class="mb-3">
+      <label for="status" class="form-label">Status</label>
+      <select class="form-select" id="status" th:field="*{status}" onchange="updateCompletedAt(this.value)">
+        <option value="PENDING" th:selected="${todo.status == 'PENDING'}">Pending</option>
+        <option value="COMPLETED" th:selected="${todo.status == 'COMPLETED'}">Completed</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+
+      <div th:if="${todo.status == todo.getStatus().COMPLETED}">
+        <label for="completedAtDisplay" class="form-label">Completed At</label>
+        <input type="text" class="form-control" id="completedAtDisplay"
+               th:value="${todo.completedAt != null ? #temporals.format(todo.completedAt, 'yyyy-MM-dd HH:mm') : ''}" readonly>
+      </div>
+      <div th:if="${todo.status == todo.getStatus().PENDING}">
+        <label for="completedAt" class="form-label">Completed At</label>
+        <input type="datetime-local" class="form-control" id="completedAt"
+               th:field="*{completedAt}"
+               th:value="${todo.completedAt != null ? #temporals.format(todo.completedAt, 'yyyy-MM-dd') + 'T' + #temporals.format(todo.completedAt, 'HH:mm') : ''}">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="/" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+</body>
+</html>
